@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "807535055186",
+    "project_id": "gemverse-407d2",
+    "storage_bucket": "gemverse-407d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807535055186:android:274eb7f77193672996aa8b",
+        "android_client_info": {
+          "package_name": "eu.tutorials.GEMVerse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807535055186-4e8n2a4c910qc26en02vpd48ghpl67sp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "eu.tutorials.GEMVerse",
+            "certificate_hash": "16dffa79293a386dbd1991e7d4bffc019084fc40"
+          }
+        },
+        {
+          "client_id": "807535055186-qb07tna8qump34nop79e8po8of5a08va.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLeqC4Cttm_2gTaZacCu1jgski3c-swNo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807535055186-qb07tna8qump34nop79e8po8of5a08va.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
