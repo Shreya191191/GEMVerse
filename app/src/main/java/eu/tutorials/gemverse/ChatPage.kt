@@ -26,13 +26,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.tutorials.bot.ui.theme.ColorModalMessage
-import eu.tutorials.bot.ui.theme.ColorUserMessage
+import eu.tutorials.GEMVerse.ui.theme.ColorModalMessage
+import eu.tutorials.GEMVerse.ui.theme.ColorUserMessage
 
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.foundation.layout.imePadding // 👈 Important for keyboard
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
+import eu.tutorials.gemverse.ui.theme.ColorModalMessage
+import eu.tutorials.gemverse.ui.theme.ColorUserMessage
 import kotlinx.coroutines.delay
 
 
