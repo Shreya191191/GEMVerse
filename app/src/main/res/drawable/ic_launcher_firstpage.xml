@@ -1,0 +1,51 @@
+<!--
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+</selector>-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Speech Bubble -->
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M20,30c0,-10 10,-20 20,-20h40c10,0 20,10 20,20v30c0,10 -10,20 -20,20H60l-12,12v-12H40c-10,0 -20,-10 -20,-20z"/>
+
+    <!-- Bot Head (circle) -->
+    <path
+        android:fillColor="#BBDEFB"
+        android:pathData="M60,40a18,18 0 1,1 0.1,0z" />
+
+    <!-- Left Eye -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,42a3,3 0 1,1 0.1,0z" />
+
+    <!-- Right Eye -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M66,42a3,3 0 1,1 0.1,0z" />
+
+    <!-- Smile -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeLineCap="round"
+        android:pathData="M54,52c3,4 9,4 12,0" />
+
+    <!-- Dots -->
+    <path
+        android:fillColor="#90CAF9"
+        android:pathData="M38,65a3,3 0 1,1 0.1,0z" />
+    <path
+        android:fillColor="#90CAF9"
+        android:pathData="M50,65a3,3 0 1,1 0.1,0z" />
+    <path
+        android:fillColor="#90CAF9"
+        android:pathData="M62,65a3,3 0 1,1 0.1,0z" />
+
+</vector>

@@ -51,6 +51,11 @@ android {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+
     implementation("androidx.core:core-ktx:1.12.0")
 
 
