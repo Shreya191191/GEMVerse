@@ -1,4 +1,4 @@
-package eu.tutorials.GEMVerse
+package eu.tutorials.gemverse
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -19,7 +19,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -37,16 +38,15 @@ import androidx.compose.ui.unit.sp
 fun SignUpScreen(
     authViewModel: AuthViewModel,
     onNavigateToLogin: ()-> Unit,
-
-    onFacebookClick: () -> Unit = {},
-    onXClick: () -> Unit = {},
+    onSignUpSuccess: () -> Unit,
     onGoogleClick: () -> Unit = {}
 ){
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
+
+    val result by authViewModel.authResult.observeAsState()
+    val isLoading by authViewModel.isLoading.observeAsState(false)
 
     Column(
         modifier = Modifier
@@ -88,33 +88,15 @@ fun SignUpScreen(
             visualTransformation = PasswordVisualTransformation()
         )
 
-//        OutlinedTextField(
-//            value = firstName,
-//            onValueChange = { firstName = it },
-//            label = { Text("First Name") },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(8.dp)
-//        )
-//        OutlinedTextField(
-//            value = lastName,
-//            onValueChange = { lastName = it },
-//            label = { Text("Last Name") },
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(8.dp)
-//        )
 
 
         Button(
             onClick = {
-                authViewModel.signUp(email, password
-                    //, firstName, lastName
-                )
+                Log.d("REPOT", "SignUp button clicked")
+                authViewModel.signUp(email, password)
                 email = ""
                 password = ""
-//                firstName = ""
-//                lastName = ""
+                Log.d("REPOT","Usase bahar aa gya")
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,26 +105,16 @@ fun SignUpScreen(
             Text("Sign Up")
         }
 
+        if (isLoading) {
+            Spacer(modifier = Modifier.height(16.dp))
+            androidx.compose.material3.CircularProgressIndicator()
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()) {
 
-//            IconButton(onClick = onFacebookClick) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_facebook),
-//                    contentDescription = "Facebook",
-//                    tint = Color.Unspecified,
-//                    modifier = Modifier.size(32.dp)
-//                )
-//            }
-//            IconButton(onClick = onXClick) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_x),
-//                    contentDescription = "X",
-//                    tint = Color.Unspecified,
-//                    modifier = Modifier.size(32.dp)
-//                )
-//            }
+
             IconButton(onClick = {
                 Log.d("ONE_TAP", "Google Sign-In button clicked")
                 onGoogleClick()
@@ -162,5 +134,19 @@ fun SignUpScreen(
         Text("Already have an account? Sign in.",
             modifier = Modifier.clickable { onNavigateToLogin() }
         )
+
+        LaunchedEffect(result) {
+            if (result is Result.Success) {
+                Log.d("GOOGLE_FLOW", "✅ AuthResult is success, navigating to ChatPage")
+                val successResult = result as Result.Success<Boolean>
+                if (successResult.data) {
+                    onSignUpSuccess()
+                    authViewModel.clearAuthResult()
+                }
+            }
+            else if (result is Result.Error) {
+                Log.e("GOOGLE_FLOW", "❌ AuthResult error: ${(result as Result.Error).exception.localizedMessage}")
+            }
+        }
     }
 }

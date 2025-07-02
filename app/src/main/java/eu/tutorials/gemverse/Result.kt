@@ -1,4 +1,4 @@
-package eu.tutorials.GEMVerse
+package eu.tutorials.gemverse
 
 sealed class Result<out T> {
     data class Success<out T>(val data: T) : Result<T>()

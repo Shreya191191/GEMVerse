@@ -1,5 +1,4 @@
-package eu.tutorials.GEMVerse
-
+package eu.tutorials.gemverse
 import com.google.firebase.firestore.FirebaseFirestore
 
 object Injection {
