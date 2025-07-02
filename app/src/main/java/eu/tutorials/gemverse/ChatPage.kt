@@ -75,14 +75,10 @@ fun ChatPage(
         drawerState = drawerState,
         drawerContent = {
             Box(
-//                modifier = Modifier
-//                    .wrapContentHeight()
-//                    .fillMaxWidth()
-//                    .background(Color.Red)
                 modifier = Modifier
-                    .fillMaxWidth(0.75f) // Drawer width
-                    .wrapContentHeight() // Only as tall as content
-                    .padding(top = 50.dp) // 👈 Push below AppBar
+                    .fillMaxWidth(0.75f) //Drawer width
+                    .wrapContentHeight() //Only as tall as content
+                    .padding(top = 50.dp) //Push below AppBar
                     .background(DeepTeal)
             ) {
                 AppDrawer(drawerValue = drawerState.currentValue) { selected ->
@@ -215,23 +211,6 @@ fun MessageInput(onMessageSend: (String) -> Unit) {
     }
 }
 
-/*
-@Composable
-fun AppHeader() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primary)
-    ) {
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = "My Bot",
-            color = Color.White,
-            fontSize = 32.sp
-        )
-    }
-}
-*/
 @Composable
 fun AppHeader(
     onMenuClick:() -> Unit ={}
