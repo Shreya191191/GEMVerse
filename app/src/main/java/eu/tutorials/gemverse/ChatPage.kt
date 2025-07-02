@@ -66,10 +66,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun ChatPage(
     modifier: Modifier = Modifier,
-    viewModel: ChatViewModel
+    viewModel: ChatViewModel,
+    onDrawerItemClick: (String) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -81,8 +83,9 @@ fun ChatPage(
                     .padding(top = 50.dp) //Push below AppBar
                     .background(DeepTeal)
             ) {
-                AppDrawer(drawerValue = drawerState.currentValue) { selected ->
-                    //scope.launch { drawerState.close() }
+                AppDrawer(drawerValue = drawerState.currentValue) { selectedRoute ->
+                    scope.launch { drawerState.close() }
+                    onDrawerItemClick(selectedRoute)
                 }
             }
         }
@@ -97,6 +100,7 @@ fun ChatPage(
             AppHeader(onMenuClick = {
                 scope.launch { drawerState.open() }
             })
+
 
             MessageList(
                 modifier = Modifier.weight(1f),
@@ -362,17 +366,32 @@ fun AppHeader(
                     thickness = 1.dp,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
-                GameDrawerItem("Tic Tac Toe", selected = selectedItem == "Tic Tac Toe") {
+                GameDrawerItem(
+                    "Tic Tac Toe",
+                    selected = selectedItem == "Tic Tac Toe"
+                ){
                     selectedItem = "Tic Tac Toe"; onItemClick("tic_tac_toe")
                 }
-                GameDrawerItem("Quiz Game", selected = selectedItem == "Quiz Game") {
-                    selectedItem = "Quiz Game"; onItemClick("quiz_game")
+                GameDrawerItem(
+                    "Quiz Game",
+                    selected = selectedItem == "Quiz Game"
+                ){
+                    selectedItem = "Quiz Game";
+                    onItemClick(Screen.QuizFlow.route)
                 }
-                GameDrawerItem("Memory Puzzle", selected = selectedItem == "Memory Puzzle") {
-                    selectedItem = "Memory Puzzle"; onItemClick("memory_puzzle")
+                GameDrawerItem(
+                    "Memory Puzzle",
+                    selected = selectedItem == "Memory Puzzle"
+                ){
+                    selectedItem = "Memory Puzzle";
+                    onItemClick("memory_puzzle")
                 }
-                GameDrawerItem("Snake Game", selected = selectedItem == "Snake Game") {
-                    selectedItem = "Snake Game"; onItemClick("snake_game")
+                GameDrawerItem(
+                    "Snake Game",
+                    selected = selectedItem == "Snake Game"
+                ){
+                    selectedItem = "Snake Game";
+                    onItemClick("snake_game")
                 }
 
             }
@@ -402,7 +421,11 @@ fun AppHeader(
     }
 
     @Composable
-    fun GameDrawerItem(title: String, selected: Boolean = false, onClick: () -> Unit) {
+    fun GameDrawerItem(
+        title: String,
+        selected: Boolean = false,
+        onClick: () -> Unit
+    ){
         val backgroundColor = if (selected) Color(0xFF005050) else Color.Transparent
 
         Row(

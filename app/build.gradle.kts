@@ -98,4 +98,14 @@ dependencies {
 
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 
+
+    // Retrofit core
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+// JSON converter using Gson
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+// OkHttp logging (optional, for debug logs)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
 }
