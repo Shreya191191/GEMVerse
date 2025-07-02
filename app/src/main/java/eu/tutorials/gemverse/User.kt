@@ -1,4 +1,4 @@
-package eu.tutorials.GEMVerse
+package eu.tutorials.gemverse
 
 data class User(
 //    val firstName: String = "",

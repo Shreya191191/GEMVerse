@@ -1,10 +1,11 @@
-package eu.tutorials.GEMVerse
+package eu.tutorials.gemverse
 
+import android.util.Log
 import androidx.compose.runtime.Composable
-
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+
 
 @Composable
 fun NavigationGraph(
@@ -21,18 +22,27 @@ fun NavigationGraph(
                 authViewModel=authViewModel,
                 onNavigateToLogin = { navController.navigate(Screen.LoginScreen.route)
                 },
-                //
+                onSignUpSuccess = {
+                    Log.d("SIGNUP", "NavigationGraph")
+                    navController.navigate(Screen.ChatPage.route)
+                },
                 onGoogleClick = onGoogleSignIn,
 
-                //
             )
         }
         composable(Screen.LoginScreen.route) {
             LoginScreen(
                 authViewModel = authViewModel,
                 onNavigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
-                onSignInSuccess = { /* TODO: Navigate to home screen if needed */ },
+                onSignInSuccess = {  navController.navigate(Screen.ChatPage.route)  },
                 onGoogleClick = onGoogleSignIn
+            )
+        }
+
+        composable(Screen.ChatPage.route){
+            val chatViewModel = ChatViewModel() // 👈 ya ViewModelProvider se lelo agar chahiye
+            ChatPage(
+                viewModel = chatViewModel
             )
         }
     }

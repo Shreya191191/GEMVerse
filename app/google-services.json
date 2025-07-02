@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:807535055186:android:274eb7f77193672996aa8b",
+        "mobilesdk_app_id": "1:807535055186:android:f27658586c49038696aa8b",
         "android_client_info": {
-          "package_name": "eu.tutorials.GEMVerse"
+          "package_name": "eu.tutorials.gemverse"
         }
       },
       "oauth_client": [
         {
-          "client_id": "807535055186-4e8n2a4c910qc26en02vpd48ghpl67sp.apps.googleusercontent.com",
+          "client_id": "807535055186-ll7vcn422vq1c8ichp88di70r7ahkc93.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "eu.tutorials.GEMVerse",
-            "certificate_hash": "16dffa79293a386dbd1991e7d4bffc019084fc40"
+            "package_name": "eu.tutorials.gemverse",
+            "certificate_hash": "547964aa82145c273dd12ae66d76c75165e7e5e1"
           }
         },
         {
