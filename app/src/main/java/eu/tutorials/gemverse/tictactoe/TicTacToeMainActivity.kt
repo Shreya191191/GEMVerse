@@ -1,8 +1,5 @@
 package eu.tutorials.gemverse.tictactoe
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -17,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,48 +26,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import eu.tutorials.gemverse.ui.theme.GEMVerseTheme
+import androidx.navigation.NavController
+import eu.tutorials.gemverse.Screen
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+@Composable
+fun TicTacToeScreen(navController: NavController) {
+    var gameMode by remember { mutableStateOf<String?>(null) }
 
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-                GEMVerseTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    var gameMode by remember { mutableStateOf<String?>(null) }
-
-                    if (gameMode == null) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("Choose Game Mode", fontSize = 24.sp)
-                            Spacer(modifier = Modifier.height(20.dp))
-                            Button(onClick = { gameMode = "Human" }) {
-                                Text("Human vs Human")
-                            }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Button(onClick = { gameMode = "AI" }) {
-                                Text("Human vs AI")
-                            }
-                        }
-                    } else {
-                        TicTacToeGame(gameMode!!) {
-                            gameMode = null // reset game
-                        }
-                    }
-                }
+    if (gameMode == null) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Choose Game Mode", fontSize = 24.sp)
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(onClick = { gameMode = "Human" }) {
+                Text("Human vs Human")
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(onClick = { gameMode = "AI" }) {
+                Text("Human vs AI")
             }
         }
+    } else {
+        gameMode?.let {
+            TicTacToeGame(
+                gameMode = it,
+                onRestartGame = {
+                    gameMode = null
+                },
+                onGoToChat = {
+                    navController.navigate(Screen.ChatPage.route)
+                }
+            )
+        }
+
     }
 }
 @Composable
 fun TicTacToeGame(
     gameMode: String,
-    onRestartGame: () -> Unit
+    onRestartGame: () -> Unit,
+    onGoToChat: () -> Unit
 ){
     val board = remember { List(3) { List(3) { mutableStateOf("") } } }
     var currentPlayer by remember { mutableStateOf("X") }
@@ -212,7 +209,7 @@ fun TicTacToeGame(
                 color = if (it == "Draw") Color.Gray else Color.Green
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
                 // Only clear board
@@ -229,7 +226,7 @@ fun TicTacToeGame(
                 Text("Restart Game")
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Button(onClick = {
                 // Reset everything: board + scores
@@ -250,10 +247,12 @@ fun TicTacToeGame(
                 Text("Back to Mode Selection")
             }
             //
+            Spacer(modifier = Modifier.height(12.dp))
+
             Button(onClick = {
-                onRestartGame() // This already navigates back to ChatPage via navController
+                onGoToChat() // This already navigates back to ChatPage via navController
             }) {
-                Text("Go to Chat Page")
+                Text("Go to My BOT")
             }
         }
     }

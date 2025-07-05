@@ -1,8 +1,5 @@
 package eu.tutorials.gemverse.captain
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,45 +23,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import eu.tutorials.gemverse.R
-import eu.tutorials.gemverse.ui.theme.GEMVerseTheme
+import eu.tutorials.gemverse.Screen
+import eu.tutorials.gemverse.ui.theme.MintGreen
 import kotlin.random.Random
+@Composable
+fun CaptainGame(navController: NavController) {
+    var treasureFound by remember { mutableStateOf(0) }
+    var direction by remember { mutableStateOf("North") }
+    var stormOrTreasure by remember { mutableStateOf("") }
+    var movesLeft by remember { mutableStateOf(10) }
+    var gameOver by remember { mutableStateOf(false) }
+    var result by remember { mutableStateOf("") }
 
+    fun resetGame() {
+        treasureFound = 0
+        direction = "North"
+        stormOrTreasure = ""
+        movesLeft = 10
+        gameOver = false
+        result = ""
+    }
 
-//class CaptainMainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContent {
-//            GEMVerseTheme {
-//                // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-//                    CaptainGame()
-//                }
-//            }
-//        }
-//    }
-
-    @Composable
-    fun CaptainGame() {
-        var treasureFound by remember { mutableStateOf(0) }
-        var direction by remember { mutableStateOf("North") }
-        var stormOrTreasure by remember { mutableStateOf("") }
-        var movesLeft by remember { mutableStateOf(10) }
-        var gameOver by remember { mutableStateOf(false) }
-        var result by remember { mutableStateOf("") }
-
-        fun resetGame() {
-            treasureFound = 0
-            direction = "North"
-            stormOrTreasure = ""
-            movesLeft = 10
-            gameOver = false
-            result = ""
-        }
-
+    if (!gameOver) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             tonalElevation = 4.dp,
@@ -74,86 +56,112 @@ import kotlin.random.Random
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "🏴‍☠️ Captain's Treasure Hunt 🗺️",
-                    style = MaterialTheme.typography.headlineSmall
+                    style = MaterialTheme.typography.headlineMedium
                 )
 
-                Text(text = "Treasure Found: $treasureFound")
-                Text(text = "Current Direction: $direction")
-                Text(text = "Result: $stormOrTreasure")
-                Text(text = "Moves Left: $movesLeft")
+                Text("Treasure Found: $treasureFound", style = MaterialTheme.typography.titleMedium)
+                Text("Current Direction: $direction", style = MaterialTheme.typography.titleMedium)
+                Text("Result: $stormOrTreasure", style = MaterialTheme.typography.titleMedium)
+                Text("Moves Left: $movesLeft", style = MaterialTheme.typography.titleMedium)
 
-                // Direction buttons
                 listOf("East", "West", "North", "South").forEach { dir ->
                     Button(
                         onClick = {
-                            if (!gameOver) {
-                                direction = dir
-                                if (Random.nextBoolean()) {
-                                    treasureFound += 1
-                                    stormOrTreasure = "🏆 We found a treasure!"
-                                } else {
-                                    stormOrTreasure = "🌩️ Storm ahead!"
-                                }
-                                movesLeft -= 1
+                            direction = dir
+                            if (Random.nextBoolean()) {
+                                treasureFound++
+                                stormOrTreasure = "🏆 We found a treasure!"
+                            } else {
+                                stormOrTreasure = "🌩️ Storm ahead!"
+                            }
+                            movesLeft--
 
-                                if (movesLeft == 0) {
-                                    gameOver = true
-                                    result = if (treasureFound > 4)
-                                        "🎉 You Win!" else "☠️ You Failed!"
-                                }
+                            if (movesLeft == 0) {
+                                gameOver = true
+                                result = if (treasureFound > 4) "🎉 You Win!" else "☠️ You Failed!"
                             }
                         },
                         shape = RoundedCornerShape(12.dp),
                         enabled = !gameOver
                     ) {
-                        Text("Sail $dir")
+                        Text("Sail $dir", fontSize = MaterialTheme.typography.bodyLarge.fontSize)
                     }
                 }
 
-                // 🖼️ Show image after each move
                 when (stormOrTreasure) {
                     "🏆 We found a treasure!" -> {
                         Image(
                             painter = painterResource(id = R.drawable.treasure2),
-                            contentDescription = "Treasure Found",
-                            modifier = Modifier.size(200.dp),
-                            //contentScale = ContentScale.Fit
-                            contentScale = ContentScale.Crop  // ✅ This removes empty spacing visually
+                            contentDescription = null,
+                            modifier = Modifier.size(220.dp),
+                            contentScale = ContentScale.Crop
                         )
                     }
+
                     "🌩️ Storm ahead!" -> {
                         Image(
                             painter = painterResource(id = R.drawable.storm),
-                            contentDescription = "Storm Ahead",
-                            modifier = Modifier.size(200.dp),
-                            //   contentScale = ContentScale.Fit
-                            contentScale = ContentScale.Crop  // ✅ This removes empty spacing visually
+                            contentDescription = null,
+                            modifier = Modifier.size(250.dp),
+                            contentScale = ContentScale.Crop
                         )
-                    }
-                }
-
-                // Game over result and restart button
-                if (gameOver) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = result,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Button(
-                        onClick = { resetGame() },
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text("🔁 Restart Game")
                     }
                 }
             }
         }
-    }
+    } else {
+        // ✅ Game Over Screen
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MintGreen
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = result,
+                    style = MaterialTheme.typography.headlineLarge
+                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-//}
+                Image(
+                    painter = painterResource(
+                        id = if (result.contains("Win")) R.drawable.treasure2 else R.drawable.storm
+                    ),
+                    contentDescription = "Result Image",
+                    modifier = Modifier.size(300.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = { resetGame() },
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("🔁 Restart Game", fontSize = MaterialTheme.typography.titleMedium.fontSize)
+                }
+
+                Spacer(modifier = Modifier.height(18.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate(Screen.ChatPage.route)
+                    },
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text("💬 Go To My BOT", fontSize = MaterialTheme.typography.titleMedium.fontSize)
+                }
+            }
+        }
+    }
+}

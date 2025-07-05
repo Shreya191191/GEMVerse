@@ -380,13 +380,13 @@ fun AppHeader(
                     selectedItem = "Quiz Game";
                     onItemClick(Screen.QuizFlow.route)
                 }
-                //GameDrawerItem(
-//                    "Captain Game",
-//                    selected = selectedItem == "Captain Game"
-//                ){
-//                    selectedItem = "Captain Game";
-//                    onItemClick("captain_game")
-//                }
+                GameDrawerItem(
+                    "Captain Game",
+                    selected = selectedItem == "Captain Game"
+                ){
+                    selectedItem = "Captain Game";
+                    onItemClick("captain_game")
+                }
                 GameDrawerItem(
                     "Snake Game",
                     selected = selectedItem == "Snake Game"
