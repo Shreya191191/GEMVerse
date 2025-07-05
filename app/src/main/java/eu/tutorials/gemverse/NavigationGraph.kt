@@ -6,9 +6,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import eu.tutorials.gemverse.captain.CaptainGame
 import eu.tutorials.gemverse.quizgame.QuizNavigation
 import eu.tutorials.gemverse.quizgame.QuizViewModel
-import eu.tutorials.gemverse.tictactoe.TicTacToeGame
+import eu.tutorials.gemverse.tictactoe.TicTacToeScreen
 
 
 @Composable
@@ -62,13 +63,11 @@ fun NavigationGraph(
         }
 //////////////
         composable(Screen.TicTacToe.route) {
-            TicTacToeGame(gameMode = "Human") {
-                navController.navigate(Screen.ChatPage.route)
-            }
+            TicTacToeScreen(navController)
         }
 
         composable(Screen.CaptainGame.route) {
-
+           CaptainGame(navController)
         }
 
     }
