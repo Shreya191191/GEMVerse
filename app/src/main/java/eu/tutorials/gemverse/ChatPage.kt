@@ -370,7 +370,8 @@ fun AppHeader(
                     "Tic Tac Toe",
                     selected = selectedItem == "Tic Tac Toe"
                 ){
-                    selectedItem = "Tic Tac Toe"; onItemClick("tic_tac_toe")
+                    selectedItem = "Tic Tac Toe";
+                    onItemClick(Screen.TicTacToe.route)
                 }
                 GameDrawerItem(
                     "Quiz Game",
@@ -379,13 +380,13 @@ fun AppHeader(
                     selectedItem = "Quiz Game";
                     onItemClick(Screen.QuizFlow.route)
                 }
-                GameDrawerItem(
-                    "Memory Puzzle",
-                    selected = selectedItem == "Memory Puzzle"
-                ){
-                    selectedItem = "Memory Puzzle";
-                    onItemClick("memory_puzzle")
-                }
+                //GameDrawerItem(
+//                    "Captain Game",
+//                    selected = selectedItem == "Captain Game"
+//                ){
+//                    selectedItem = "Captain Game";
+//                    onItemClick("captain_game")
+//                }
                 GameDrawerItem(
                     "Snake Game",
                     selected = selectedItem == "Snake Game"

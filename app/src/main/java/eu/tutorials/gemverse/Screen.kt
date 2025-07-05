@@ -7,4 +7,6 @@ sealed class Screen(val route:String){
 
     //This for quiz navigation:
     object QuizFlow : Screen("quiz_flow")
+    object TicTacToe: Screen("tic_tac_toe")
+    object CaptainGame: Screen("captain_game")
 }
