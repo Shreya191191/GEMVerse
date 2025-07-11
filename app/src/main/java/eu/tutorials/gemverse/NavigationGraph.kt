@@ -44,15 +44,26 @@ fun NavigationGraph(
             )
         }
 
-        composable(Screen.ChatPage.route){
-            val chatViewModel = ChatViewModel() // 👈 ya ViewModelProvider se lelo agar chahiye
+        composable(Screen.ChatPage.route) {
+            val chatViewModel = ChatViewModel()
             ChatPage(
                 viewModel = chatViewModel,
                 onDrawerItemClick = { route ->
-                    navController.navigate(route)
+                    if (route == Screen.LogOut.route) {
+                        authViewModel.logout()
+                        Log.d("LOGOUT_FLOW", "Logout called in AuthViewModel")    // ✅ YEH LOG
+
+                        navController.navigate(Screen.LoginScreen.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(route)
+                    }
                 }
             )
         }
+
+
 
         composable(Screen.QuizFlow.route) {
             val quizViewModel = viewModel<QuizViewModel>()
@@ -69,6 +80,9 @@ fun NavigationGraph(
         composable(Screen.CaptainGame.route) {
            CaptainGame(navController)
         }
+
+
+
 
     }
 }

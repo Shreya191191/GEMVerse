@@ -354,7 +354,8 @@ fun AppHeader(
                 R.drawable.ic_logout, "Log out",
                 selected = selectedItem == "Log out"
             ){
-                selectedItem = "Log out"; onItemClick("logout")
+                selectedItem = "Log out";
+                onItemClick(Screen.LogOut.route)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -385,7 +386,7 @@ fun AppHeader(
                     selected = selectedItem == "Captain Game"
                 ){
                     selectedItem = "Captain Game";
-                    onItemClick("captain_game")
+                    onItemClick(Screen.CaptainGame.route)
                 }
                 GameDrawerItem(
                     "Snake Game",
