@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.firebase.auth.FirebaseAuth
 import eu.tutorials.gemverse.captain.CaptainGame
 import eu.tutorials.gemverse.quizgame.QuizNavigation
 import eu.tutorials.gemverse.quizgame.QuizViewModel
@@ -49,10 +50,17 @@ fun NavigationGraph(
             ChatPage(
                 viewModel = chatViewModel,
                 onDrawerItemClick = { route ->
+<<<<<<< HEAD
                     if (route == Screen.LogOut.route) {
                         authViewModel.logout()
                         Log.d("LOGOUT_FLOW", "Logout called in AuthViewModel")    // ✅ YEH LOG
 
+=======
+                    if (route == "logout") {
+                        // Pehle logout karo
+                        FirebaseAuth.getInstance().signOut()
+                        // Sab backstack hata ke LoginScreen pe jao
+>>>>>>> logout
                         navController.navigate(Screen.LoginScreen.route) {
                             popUpTo(0) { inclusive = true }
                         }
@@ -64,7 +72,10 @@ fun NavigationGraph(
         }
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> logout
         composable(Screen.QuizFlow.route) {
             val quizViewModel = viewModel<QuizViewModel>()
             QuizNavigation(
