@@ -60,4 +60,18 @@ class AuthViewModel : ViewModel() {
         _authResult.value = null
     }
 
+    fun logout() {
+        FirebaseAuth.getInstance().signOut()
+        Log.d("LOGOUT_FLOW", "FirebaseAuth signOut DONE")
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            Log.d("LOGOUT_FLOW", "Logout SUCCESSFUL. User is null.")
+        } else {
+            Log.d("LOGOUT_FLOW", "Logout FAILED. User still logged in: ${user.email}")
+        }
+    }
+
+
+
 }
