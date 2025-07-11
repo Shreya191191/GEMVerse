@@ -80,7 +80,7 @@ fun ChatPage(
                 modifier = Modifier
                     .fillMaxWidth(0.75f) //Drawer width
                     .wrapContentHeight() //Only as tall as content
-                    .padding(top = 50.dp) //Push below AppBar
+                    .padding(top = 50.dp) //Push below
                     .background(DeepTeal)
             ) {
                 AppDrawer(drawerValue = drawerState.currentValue) { selectedRoute ->
