@@ -23,18 +23,31 @@ fun NavigationGraph(
     authViewModel: AuthViewModel,
     onGoogleSignIn: () -> Unit
 ) {
+    val user = FirebaseAuth.getInstance().currentUser
+    val startDestination = if (user == null) {
+        Screen.SignupScreen.route
+    } else {
+        Screen.ChatPage.route
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Screen.SignupScreen.route
+        startDestination = startDestination
     ) {
+
         composable(Screen.SignupScreen.route) {
             SignUpScreen(
                 authViewModel=authViewModel,
-                onNavigateToLogin = { navController.navigate(Screen.LoginScreen.route)
+                onNavigateToLogin = {
+                    navController.navigate(Screen.LoginScreen.route){
+                        popUpTo(0) { inclusive = true }
+                    }
                 },
                 onSignUpSuccess = {
                     Log.d("SIGNUP", "NavigationGraph")
-                    navController.navigate(Screen.ChatPage.route)
+                    navController.navigate(Screen.ChatPage.route) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 },
                 onGoogleClick = onGoogleSignIn,
 
@@ -43,8 +56,16 @@ fun NavigationGraph(
         composable(Screen.LoginScreen.route) {
             LoginScreen(
                 authViewModel = authViewModel,
-                onNavigateToSignUp = { navController.navigate(Screen.SignupScreen.route) },
-                onSignInSuccess = {  navController.navigate(Screen.ChatPage.route)  },
+                onNavigateToSignUp = {
+                    navController.navigate(Screen.SignupScreen.route){
+                        popUpTo(0) { inclusive = true }
+                    }
+                 },
+                onSignInSuccess = {
+                    navController.navigate(Screen.ChatPage.route) {
+                      popUpTo(0) { inclusive = true }
+                   }
+               },
                 onGoogleClick = onGoogleSignIn
             )
         }
@@ -100,7 +121,6 @@ fun NavigationGraph(
                 viewModel = memoryGameViewModel
             )
         }
-
 
     }
 }
