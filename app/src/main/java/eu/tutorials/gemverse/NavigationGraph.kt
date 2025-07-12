@@ -8,6 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.google.firebase.auth.FirebaseAuth
 import eu.tutorials.gemverse.captain.CaptainGame
+import eu.tutorials.gemverse.memoflip.MemoryFlipScreen
+import eu.tutorials.gemverse.memoflip.MemoryGameViewModel
+import eu.tutorials.gemverse.numguess.NumberGuessScreen
+import eu.tutorials.gemverse.numguess.NumberGuessViewModel
 import eu.tutorials.gemverse.quizgame.QuizNavigation
 import eu.tutorials.gemverse.quizgame.QuizViewModel
 import eu.tutorials.gemverse.tictactoe.TicTacToeScreen
@@ -49,31 +53,21 @@ fun NavigationGraph(
             val chatViewModel = ChatViewModel()
             ChatPage(
                 viewModel = chatViewModel,
-                onDrawerItemClick = { route ->
 
+                onDrawerItemClick = { route ->
                     if (route == Screen.LogOut.route) {
                         authViewModel.logout()
-                        Log.d("LOGOUT_FLOW", "Logout called in AuthViewModel")    // ✅ YEH LOG
-
-
-                        if (route == "logout") {
-                            // Pehle logout karo
-                            FirebaseAuth.getInstance().signOut()
-                            // Sab backstack hata ke LoginScreen pe jao
-
-                            navController.navigate(Screen.LoginScreen.route) {
-                                popUpTo(0) { inclusive = true }
-                            }
-                        } else {
-                            navController.navigate(route)
+                        FirebaseAuth.getInstance().signOut()
+                        navController.navigate(Screen.LoginScreen.route) {
+                            popUpTo(0) { inclusive = true }
                         }
+                    }
+                    else {
+                        navController.navigate(route)
                     }
                 }
             )
         }
-
-
-
 
         composable(Screen.QuizFlow.route) {
             val quizViewModel = viewModel<QuizViewModel>()
@@ -82,7 +76,7 @@ fun NavigationGraph(
                 navToChat = { navController.navigate(Screen.ChatPage.route)
             })
         }
-//////////////
+
         composable(Screen.TicTacToe.route) {
             TicTacToeScreen(navController)
         }
@@ -91,7 +85,21 @@ fun NavigationGraph(
            CaptainGame(navController)
         }
 
+        composable(Screen.NumberGuess.route) {
+            val numberGuessViewModel = viewModel<NumberGuessViewModel>()
+            NumberGuessScreen(
+                navController = navController,
+                viewModel = numberGuessViewModel
+            )
+        }
 
+        composable(Screen.MemoFlip.route) {
+            val memoryGameViewModel = viewModel<MemoryGameViewModel>()
+            MemoryFlipScreen(
+                navController = navController,
+                viewModel = memoryGameViewModel
+            )
+        }
 
 
     }

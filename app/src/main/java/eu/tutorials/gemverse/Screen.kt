@@ -10,4 +10,6 @@ sealed class Screen(val route:String){
     object TicTacToe: Screen("tic_tac_toe")
     object CaptainGame: Screen("captain_game")
     object LogOut: Screen("logout")
+    object NumberGuess: Screen("number_guess")
+    object MemoFlip: Screen("memo_flip")
 }

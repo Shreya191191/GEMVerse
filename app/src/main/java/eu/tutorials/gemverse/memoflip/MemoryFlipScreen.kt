@@ -2,13 +2,24 @@ package eu.tutorials.gemverse.memoflip
 
 //package eu.tutorials.memoflip
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,10 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import eu.tutorials.gemverse.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoryFlipScreen(viewModel: MemoryGameViewModel = viewModel()) {
+fun MemoryFlipScreen(
+    navController: NavHostController,
+    viewModel: MemoryGameViewModel = viewModel()) {
     val cards by viewModel::cards
 
     Column(
@@ -78,7 +93,7 @@ fun MemoryFlipScreen(viewModel: MemoryGameViewModel = viewModel()) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Result Message
         if (viewModel.gameWon) {
@@ -93,15 +108,26 @@ fun MemoryFlipScreen(viewModel: MemoryGameViewModel = viewModel()) {
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-        }
 
+            Button(
+                onClick = { viewModel.resetGame() },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("Play Again")
+            }
 
-        // Restart Button
-        Button(
-            onClick = { viewModel.resetGame() },
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Text("Play Again")
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    navController.navigate(Screen.ChatPage.route) {
+                        popUpTo(Screen.ChatPage.route) { inclusive = true }
+                    }
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text("Back to My Bot")
+            }
         }
     }
 }

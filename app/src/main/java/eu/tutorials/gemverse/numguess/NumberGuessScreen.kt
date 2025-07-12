@@ -18,9 +18,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import eu.tutorials.gemverse.Screen
 
 @Composable
-fun NumberGuessScreen(viewModel: NumberGuessViewModel = viewModel()) {
+fun NumberGuessScreen(
+    navController: NavHostController,
+    viewModel: NumberGuessViewModel = viewModel()
+){
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,6 +66,14 @@ fun NumberGuessScreen(viewModel: NumberGuessViewModel = viewModel()) {
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = { viewModel.resetGame() }) {
                 Text("Play Again")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(onClick = {
+                navController.navigate(Screen.ChatPage.route) {
+                    popUpTo(Screen.ChatPage.route) { inclusive = true }
+                }
+            }) {
+                Text("Back to My Bot")
             }
         }
     }
