@@ -80,6 +80,9 @@ fun NavigationGraph(
                     if (route == Screen.LogOut.route) {
                         authViewModel.logout()
                         Log.d("LOGOUT_FLOW", "Logout clicked")
+                        navController.navigate(Screen.SignupScreen.route){
+                            popUpTo(0) { inclusive = true }
+                        }
                     } else {
                         navController.navigate(route)
                     }
