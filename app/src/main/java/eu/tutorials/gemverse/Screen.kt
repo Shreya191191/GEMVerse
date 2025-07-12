@@ -12,4 +12,7 @@ sealed class Screen(val route:String){
     object LogOut: Screen("logout")
     object NumberGuess: Screen("number_guess")
     object MemoFlip: Screen("memo_flip")
+
+    object StartDestinationScreen: Screen("startDestination")
+
 }
