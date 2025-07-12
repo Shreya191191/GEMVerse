@@ -2,11 +2,12 @@ package eu.tutorials.gemverse
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.google.firebase.auth.FirebaseAuth
 import eu.tutorials.gemverse.captain.CaptainGame
 import eu.tutorials.gemverse.memoflip.MemoryFlipScreen
 import eu.tutorials.gemverse.memoflip.MemoryGameViewModel
@@ -23,11 +24,12 @@ fun NavigationGraph(
     authViewModel: AuthViewModel,
     onGoogleSignIn: () -> Unit
 ) {
-    val user = FirebaseAuth.getInstance().currentUser
-    val startDestination = if (user == null) {
-        Screen.SignupScreen.route
-    } else {
+    val isLoggedIn by authViewModel.isLoggedIn.observeAsState()
+
+    val startDestination = if (isLoggedIn == true) {
         Screen.ChatPage.route
+    } else {
+        Screen.SignupScreen.route
     }
 
     NavHost(
@@ -74,19 +76,15 @@ fun NavigationGraph(
             val chatViewModel = ChatViewModel()
             ChatPage(
                 viewModel = chatViewModel,
-
                 onDrawerItemClick = { route ->
                     if (route == Screen.LogOut.route) {
                         authViewModel.logout()
-                        FirebaseAuth.getInstance().signOut()
-                        navController.navigate(Screen.LoginScreen.route) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }
-                    else {
+                        Log.d("LOGOUT_FLOW", "Logout clicked")
+                    } else {
                         navController.navigate(route)
                     }
                 }
+
             )
         }
 
