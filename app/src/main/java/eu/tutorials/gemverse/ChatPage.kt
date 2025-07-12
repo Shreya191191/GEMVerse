@@ -389,13 +389,19 @@ fun AppHeader(
                     onItemClick(Screen.CaptainGame.route)
                 }
                 GameDrawerItem(
-                    "Snake Game",
-                    selected = selectedItem == "Snake Game"
+                    "Number Guess",
+                    selected = selectedItem == "Number Guess"
                 ){
-                    selectedItem = "Snake Game";
-                    onItemClick("snake_game")
+                    selectedItem = "Number Guess";
+                    onItemClick(Screen.NumberGuess.route)
                 }
-
+                GameDrawerItem(
+                    "Memo Flip",
+                    selected = selectedItem == "Memo Flip"
+                ){
+                    selectedItem = "Memo Flip";
+                    onItemClick(Screen.MemoFlip.route)
+                }
             }
         }
     }
