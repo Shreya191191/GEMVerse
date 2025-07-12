@@ -13,12 +13,17 @@ import kotlinx.coroutines.tasks.await
 class AuthViewModel : ViewModel() {
     private val userRepository: UserRepository
 
+    private val _isLoggedIn = MutableLiveData<Boolean>()
+    val isLoggedIn: LiveData<Boolean> get() = _isLoggedIn
+
     init {
         userRepository = UserRepository(
             FirebaseAuth.getInstance(),
             Injection.instance()
         )
+        _isLoggedIn.value = FirebaseAuth.getInstance().currentUser != null
     }
+
     private val _isLoading = MutableLiveData(false)
     val isLoading: LiveData<Boolean> get() = _isLoading
 
@@ -33,12 +38,19 @@ class AuthViewModel : ViewModel() {
             _isLoading.value = false
             Log.d("REPOT", "Result from repository: $result")
             _authResult.value = result
+            if (result is Result.Success && result.data == true) {
+                _isLoggedIn.value = true
+            }
         }
     }
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
-            _authResult.value = userRepository.login(email, password)
+            val result = userRepository.login(email, password)
+            _authResult.value = result
+            if (result is Result.Success && result.data == true) {
+                _isLoggedIn.value = true
+            }
         }
     }
 
@@ -49,6 +61,7 @@ class AuthViewModel : ViewModel() {
                 FirebaseAuth.getInstance().signInWithCredential(credential).await()
                 Log.d("GOOGLE_FLOW", "✅ Firebase sign-in successful")
                 _authResult.value = Result.Success(true)
+                _isLoggedIn.value = true
             } catch (e: Exception) {
                 Log.e("GOOGLE_FLOW", "❌ Firebase sign-in failed: ${e.localizedMessage}")
                 _authResult.value = Result.Error(e)
@@ -62,13 +75,14 @@ class AuthViewModel : ViewModel() {
 
     fun logout() {
         FirebaseAuth.getInstance().signOut()
-        Log.d("LOGOUT_FLOW", "FirebaseAuth signOut DONE")
-
+        Log.d("LOGOUT_FLOW", "User signed out")
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            Log.d("LOGOUT_FLOW", "Logout SUCCESSFUL. User is null.")
+            Log.d("LOGOUT_FLOW", "Firebase User is NULL after signOut")
+            _isLoggedIn.value = false
         } else {
-            Log.d("LOGOUT_FLOW", "Logout FAILED. User still logged in: ${user.email}")
+            Log.d("LOGOUT_FLOW", "Firebase User STILL NOT null: ${user.email}")
+            _isLoggedIn.value = false
         }
     }
 
