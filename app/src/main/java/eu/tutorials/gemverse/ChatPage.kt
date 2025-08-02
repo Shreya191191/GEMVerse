@@ -16,12 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Divider
@@ -56,9 +56,7 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.auth.FirebaseAuth
 import eu.tutorials.gemverse.ui.theme.ColorModalMessage
 import eu.tutorials.gemverse.ui.theme.ColorUserMessage
-import eu.tutorials.gemverse.ui.theme.DeepTeal
 import eu.tutorials.gemverse.ui.theme.FrenchGray
-import eu.tutorials.gemverse.ui.theme.MintGreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -71,22 +69,65 @@ fun ChatPage(
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    // ✅ NEW: Observe sessions
+    val sessions = viewModel.sessionList
 
 
+    LaunchedEffect(drawerState.currentValue) {
+        if (drawerState.currentValue == DrawerValue.Open) {
+            println("Drawer khula, sessions load kar rahe hain...")
+            viewModel.loadSessions()
+        }
+    }
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            Box(
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth(0.75f) //Drawer width
+//                  //  .wrapContentHeight() //Only as tall as content
+//                    .fillMaxHeight()
+//                    .padding(top = 50.dp) //Push below AppBar
+//                  //  .background(DeepTeal)
+//            )
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.75f) //Drawer width
-                    .wrapContentHeight() //Only as tall as content
-                    .padding(top = 50.dp) //Push below AppBar
-                    .background(DeepTeal)
-            ) {
-                AppDrawer(drawerValue = drawerState.currentValue) { selectedRoute ->
+                    .fillMaxWidth(0.75f)
+                    .fillMaxHeight()
+                   // .background(DeepTeal)
+                    .background(Color.White)
+            )  {
+//                AppDrawer(drawerValue = drawerState.currentValue) { selectedRoute ->
+//                    scope.launch { drawerState.close() }
+//                    onDrawerItemClick(selectedRoute)
+//                }
+//                AppDrawer(
+//                    drawerValue = drawerState.currentValue,
+//                    sessions = sessions
+//                ) { selectedRoute ->
+//                    scope.launch { drawerState.close() }
+//                    if (sessions.any { it.sessionId == selectedRoute }) {
+//                        viewModel.loadMessagesFromSession(selectedRoute)
+//                    } else {
+//                        onDrawerItemClick(selectedRoute)
+//                    }
+//                }
+                AppDrawer(
+                    drawerValue = drawerState.currentValue,
+                    sessions = sessions
+                ) { selectedRoute ->
                     scope.launch { drawerState.close() }
-                    onDrawerItemClick(selectedRoute)
+                    if (sessions.any { it.sessionId == selectedRoute }) {
+                        viewModel.loadMessagesFromSession(selectedRoute)
+                    } else if (selectedRoute == "new_chat") {
+                        viewModel.currentSessionId = null
+                        viewModel.messageList.clear()
+                    } else {
+                        onDrawerItemClick(selectedRoute)
+                    }
                 }
+
+
             }
         }
 
@@ -100,6 +141,23 @@ fun ChatPage(
             AppHeader(onMenuClick = {
                 scope.launch { drawerState.open() }
             })
+            // ✅ NEW:
+//            if (drawerState.currentValue == DrawerValue.Open && sessions.isNotEmpty()) {
+//                // Drawer khula hai → sessions dikhao
+//                ChatSessionList(
+//                    sessions = sessions,
+//                    onSessionClick = {
+//                        viewModel.loadMessagesFromSession(it.sessionId)
+//                    }
+//                )
+//            } else {
+//                // Drawer band hai → normal chat dikhao
+//                MessageList(
+//                    modifier = Modifier.weight(1f),
+//                    messageList = viewModel.messageList
+//                )
+//            }
+
 
 
             MessageList(
@@ -107,9 +165,18 @@ fun ChatPage(
                 messageList = viewModel.messageList
             )
 
-            MessageInput(onMessageSend = {
-                viewModel.sendMessage(it)
+//            MessageInput(onMessageSend = {
+//                viewModel.sendMessage(it)
+//            })
+
+            MessageInput(onMessageSend = { msg ->
+                if (viewModel.currentSessionId == null) {
+                    viewModel.createSessionAndSendMessage(msg)
+                } else {
+                    viewModel.sendMessage(msg)
+                }
             })
+
         }
     }
 }
@@ -217,7 +284,8 @@ fun MessageInput(onMessageSend: (String) -> Unit) {
 
 @Composable
 fun AppHeader(
-    onMenuClick:() -> Unit ={}
+    onMenuClick:() -> Unit ={},
+  //  title: String = "New Chat"
 ) {
     val emojis = listOf("🤖", "💬", "😄", "🧠", "📡", "👾", "🗨️")
     var currentEmojiIndex by remember { mutableStateOf(0) }
@@ -265,10 +333,11 @@ fun AppHeader(
     @Composable
     fun AppDrawer(
         drawerValue: DrawerValue,
+        sessions: List<ChatSessionModel>,
         onItemClick:(String) -> Unit
-    ){
-        val currentUserEmail= FirebaseAuth.getInstance().currentUser?.email ?: "No Email"
-        var isGamesExpanded by remember {mutableStateOf(false)}
+    ) {
+        val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: "No Email"
+        var isGamesExpanded by remember { mutableStateOf(false) }
         var selectedItem by remember { mutableStateOf("") } // ✅ NEW: Track selected item
 
         LaunchedEffect(drawerValue) {
@@ -278,20 +347,24 @@ fun AppHeader(
             }
         }
 
+
+
         Column(
             modifier = Modifier
                 // .wrapContentHeight()
                 .fillMaxWidth()
-                .background(MintGreen)
+                // .background(MintGreen)
+                .background((Color.White))
                 .padding(horizontal = 16.dp, vertical = 16.dp)
         ) {
+
             // Email
             val clipboardManager = LocalClipboardManager.current
             val context = LocalContext.current
             DrawerRow(
                 R.drawable.ic_profileicon, currentUserEmail,
                 selected = selectedItem == currentUserEmail
-            ){
+            ) {
                 clipboardManager.setText(AnnotatedString(currentUserEmail))
                 Toast.makeText(context, "User ID copied!", Toast.LENGTH_SHORT).show()
                 selectedItem = currentUserEmail;
@@ -334,7 +407,7 @@ fun AppHeader(
             DrawerRow(
                 R.drawable.ic_settings, "Settings",
                 selected = selectedItem == "Settings"
-            ){
+            ) {
                 selectedItem = "Settings"; onItemClick("settings")
             }
 
@@ -347,16 +420,43 @@ fun AppHeader(
             DrawerRow(
                 R.drawable.ic_help, "Help",
                 selected = selectedItem == "Help"
-            ){
+            ) {
                 selectedItem = "Help"; onItemClick("help")
             }
             DrawerRow(
                 R.drawable.ic_logout, "Log out",
                 selected = selectedItem == "Log out"
-            ){
+            ) {
                 selectedItem = "Log out"; onItemClick("logout")
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+            // ➡ NEW CHAT ROW
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onItemClick("new_chat")
+                    }
+                    .background(Color.White)
+                    .padding(vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "New Chat",
+                    tint = Color.Black,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "New Chat",
+                    color = Color.Black,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Divider(color = Color.Black, thickness = 1.dp)
             Spacer(modifier = Modifier.height(12.dp))
 
             if (isGamesExpanded) {
@@ -369,33 +469,86 @@ fun AppHeader(
                 GameDrawerItem(
                     "Tic Tac Toe",
                     selected = selectedItem == "Tic Tac Toe"
-                ){
+                ) {
                     selectedItem = "Tic Tac Toe";
                     onItemClick(Screen.TicTacToe.route)
                 }
                 GameDrawerItem(
                     "Quiz Game",
                     selected = selectedItem == "Quiz Game"
-                ){
+                ) {
                     selectedItem = "Quiz Game";
                     onItemClick(Screen.QuizFlow.route)
                 }
                 GameDrawerItem(
                     "Captain Game",
                     selected = selectedItem == "Captain Game"
-                ){
+                ) {
                     selectedItem = "Captain Game";
                     onItemClick("captain_game")
                 }
                 GameDrawerItem(
                     "Snake Game",
                     selected = selectedItem == "Snake Game"
-                ){
+                ) {
                     selectedItem = "Snake Game";
                     onItemClick("snake_game")
                 }
 
             }
+//            if (sessions.isNotEmpty()) {
+//                Text(
+//                    text = "Chat Sessions",
+//                    fontSize = 18.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color.Black,
+//                    modifier = Modifier.padding(vertical = 8.dp)
+//                )
+//                sessions.forEach { session ->
+//                    Text(
+//                        text = session.sessionId,
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .clickable {
+//                                onItemClick(session.sessionId)
+//                            }
+//                            .padding(8.dp),
+//                        color = Color.Black
+//                    )
+//                }
+//            }
+//
+//        }
+
+            if (sessions.isNotEmpty()) {
+                Text(
+                    text = "Chat Sessions",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+                sessions.forEach { session ->
+                    Text(
+                        text = session.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onItemClick(session.sessionId)
+                            }
+                            .padding(8.dp),
+                        color = Color.Black
+                    )
+                }
+            } else {
+                Text(
+                    text = "No sessions found.",
+                    color = Color.Gray,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+
         }
     }
 
